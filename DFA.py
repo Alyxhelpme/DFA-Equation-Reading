@@ -2,9 +2,14 @@
 #Act 3.2 Programando un DFA
 
 from dataclasses import dataclass
+from sys import displayhook
 from tkinter import E
+from tokenize import Comment, Special
+from xml.dom.minidom import Element
+from numpy import char, character
 from pyparsing import Word
 import pandas as pd
+from IPython.display import display
 
 
 def split(word):
@@ -21,7 +26,7 @@ def isSpecial(character,character2): #Aqui simplemente voy a ahcer un monton de 
         return "Parentesis que cierra"
     elif(character=='-'):
         if(isDigit(character2)): #En el caso de la resta esta complicado definir si es una assignaciona resta o un numero negativo, entonces verificaremos que el valor despues no sea un numero
-            return False
+            return "NOTRESTA"
         else:
             return "Resta"
     elif(character=='/'):
@@ -48,42 +53,53 @@ def isDigit(character):
     return "Entero"
 
 def isAlpha(character):
-    if(character.isalpha()):
+    if(character.isalpha() and character!='E'):
         return True
     else:
         return False
 
 
 def LexerArimetico(archivo):
-    data={
-    "Token":[],
-    "Tipo":[]
-    }
-    df=pd.DataFrame(data)
+    df=pd.DataFrame(columns=['Token', 'Tipo'])
     #Se crea un df de pandas para poder posteriormente organizar la informacion dentro de este
     spltstr=split(archivo)
-    for element in range(len(spltstr)):
-        if(element==' '): #Si el caracter es un empty string, se ignora
+    print(spltstr)
+    element=0
+    while element<len(spltstr):
+        newn=""
+        if(spltstr[element]=='\n' or spltstr[element]==''): #Si el caracter es un empty string, se ignora
+            element+=1
             continue
-        elif(isAlpha(spltstr[element])):
-
-            df.append([spltstr[element]],["Variable"]) #Dentro del dataframe asumiendo que cualquier letra menos la E que es utilizada como exponencial se agrega como variable
         elif(isDigit(spltstr[element])!=False):
-            newn=""
-            newn.join(spltstr[element]) #Se va a crear un nuevo string con los numeros
-            while isDigit()!=False:
-                newn.join(spltstr[element+1])
-                
-        elif(isSpecial(spltstr[element],spltstr[element+1])):
+            while (isDigit(spltstr[element])!=False) or (spltstr[element]=='E'): #Se va a formar un neuvo string mientras haya numeros o nos encontremos con un exponencial
+                newn.join(spltstr[element])
+                element+=1
+        elif(isAlpha(spltstr[element])):
+            #df.append([spltstr[element]],["Variable"]) #Dentro del dataframe asumiendo que cualquier letra menos la E que es utilizada como exponencial se agrega como variable
+            df2=pd.DataFrame([[spltstr[element],"Variable"]],columns=['Token','Tipo']) 
+            pd.concat([df,df2]) 
+            element+=1      
+        elif(isSpecial(spltstr[element],spltstr[element+1])!=False):
+            special=isSpecial(spltstr[element],spltstr[element+1]) #Si no regresa false, regresa un strirng que agregaremos a la tabla
+            if(special=="NOTRESTA"):
+                newn.join(spltstr[element])
+            elif(special=="Comentario"):
+                comment=""
+                while element<len(spltstr):
+                    comment.join(spltstr[element]) #Se crea un solo string con lo que queda de toda la linea
+                    element+=1
+                #df.append([comment],[special])
+                df2=pd.DataFrame([[comment,special]],columns=['Token','Tipo']) 
+                pd.concat([df,df2])  
 
-
-
-
-
-
-
-
-
+            else:
+                #df.append([spltstr[element]],[special])
+                df2=pd.DataFrame([[spltstr[element],special]],columns=['Token','Tipo']) 
+                pd.concat([df,df2])  
+            element+=1
+        element+=1
+    display(df)
+                 
 
 # MAIN
 # Primero el programa recibira como entrada un archivo de texto
@@ -92,4 +108,7 @@ with open("entrada.txt","r") as archivo:
     for line in archivo:
         eqs.append(line)
 #Todas las entradas del archivo de texto, leidas linea por linea se guardan como indices dentro de una lista
+print(eqs)
+for line in range(len(eqs)):
+    LexerArimetico(eqs[line])
 
