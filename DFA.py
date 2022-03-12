@@ -60,14 +60,18 @@ def isAlpha(character):
 
 
 def LexerArimetico(archivo):
-    df=pd.DataFrame(columns=['Token', 'Tipo'])
+    df=pd.DataFrame(
+        {
+            "Token":[],
+            "Tipo":[]
+        })
     #Se crea un df de pandas para poder posteriormente organizar la informacion dentro de este
     spltstr=split(archivo)
     print(spltstr)
     element=0
     while element<len(spltstr):
         newn=""
-        if(spltstr[element]=='\n' or spltstr[element]==''): #Si el caracter es un empty string, se ignora
+        if(spltstr[element]=='\n' or spltstr[element]==' '): #Si el caracter es un empty string, se ignora
             element+=1
             continue
         elif(isDigit(spltstr[element])!=False):
@@ -76,34 +80,46 @@ def LexerArimetico(archivo):
                 element+=1
         elif(isAlpha(spltstr[element])):
             #df.append([spltstr[element]],["Variable"]) #Dentro del dataframe asumiendo que cualquier letra menos la E que es utilizada como exponencial se agrega como variable
-            df2=pd.DataFrame([[spltstr[element],"Variable"]],columns=['Token','Tipo']) 
-            pd.concat([df,df2]) 
-            element+=1      
+            df2=pd.DataFrame(
+                {
+                    "Token":[spltstr[element]],
+                    "Tipo":["Variable"]
+                }) 
+            pd.concat([df,df2])
+            element+=1     
         elif(isSpecial(spltstr[element],spltstr[element+1])!=False):
             special=isSpecial(spltstr[element],spltstr[element+1]) #Si no regresa false, regresa un strirng que agregaremos a la tabla
             if(special=="NOTRESTA"):
                 newn.join(spltstr[element])
+                element+=1
             elif(special=="Comentario"):
                 comment=""
                 while element<len(spltstr):
                     comment.join(spltstr[element]) #Se crea un solo string con lo que queda de toda la linea
-                    element+=1
                 #df.append([comment],[special])
-                df2=pd.DataFrame([[comment,special]],columns=['Token','Tipo']) 
-                pd.concat([df,df2])  
+                df2=pd.DataFrame(
+                {
+                    "Token":[comment],
+                    "Tipo":[special]
+                }) 
+                pd.concat([df,df2])
+                element+=1  
 
             else:
                 #df.append([spltstr[element]],[special])
-                df2=pd.DataFrame([[spltstr[element],special]],columns=['Token','Tipo']) 
-                pd.concat([df,df2])  
-            element+=1
-        element+=1
+                df2=pd.DataFrame(
+                {
+                    "Token":[spltstr[element]],
+                    "Tipo":[special]
+                }) 
+                pd.concat([df,df2])
+                element+=1  
     display(df)
                  
 
 # MAIN
 # Primero el programa recibira como entrada un archivo de texto
-with open("entrada.txt","r") as archivo:
+with open("C:/Users/forar/Desktop/Skul/TC2037/Act3.2/DFA-Equation-Reading/entrada.txt","r") as archivo:
     eqs=[]
     for line in archivo:
         eqs.append(line)
