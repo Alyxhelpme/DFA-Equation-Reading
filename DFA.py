@@ -56,7 +56,7 @@ def isDigit(character):
     return "Entero"
 
 def isAlpha(character): #Se confirma si es algun tipo de caracter alfanumerico con excepcion a la E
-    if(character.isalpha() and character!='E'):
+    if(character.isalpha() and character!='E' or character=='_'):
         return True
     else:
         return False
