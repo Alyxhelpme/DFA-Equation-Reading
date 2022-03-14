@@ -6,7 +6,7 @@ from sys import displayhook
 from tkinter import E
 from tokenize import Comment, Special
 from xml.dom.minidom import Element
-from numpy import char, character
+from numpy import char, character, inner
 from pyparsing import Word
 import pandas as pd
 from IPython.display import display
@@ -16,7 +16,7 @@ from io import StringIO
 def split(word):
     return [char for char in word]
 
-def isSpecial(character,character2): #Aqui simplemente voy a ahcer un monton de ifs para confirmar si es alguno de los caracteres especiales dentro del lenguaje 
+def isSpecial(character,character2): #Aqui simplemente voy a hacer un monton de ifs para confirmar si es alguno de los caracteres especiales dentro del lenguaje 
     if(character=='='):
         return "Asignacion"
     elif(character=='*'):
@@ -55,7 +55,7 @@ def isDigit(character):
         return "Real"
     return "Entero"
 
-def isAlpha(character):
+def isAlpha(character): #Se confirma si es algun tipo de caracter alfanumerico con excepcion a la E
     if(character.isalpha() and character!='E'):
         return True
     else:
@@ -104,7 +104,7 @@ def LexerArimetico(archivo):
                 list.append((spltstr[element],special)) 
                 element+=1  
     df=pd.DataFrame(list, columns=['Token','Tipo'])
-    display(df)
+    return df
                  
 
 # MAIN
@@ -115,7 +115,9 @@ with open("C:/Users/forar/Desktop/Skul/TC2037/Act3.2/DFA-Equation-Reading/entrad
         eqs.append(line)
 #Todas las entradas del archivo de texto, leidas linea por linea se guardan como indices dentro de una lista
 #for line in range(len(eqs)):
-
+df=pd.DataFrame()
 for i in range(len(eqs)):
-    LexerArimetico(eqs[i])
+    df2=LexerArimetico(eqs[i])
+    df=pd.concat([df,df2]  )
+display(df)
 
