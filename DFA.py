@@ -10,6 +10,7 @@ from numpy import char, character
 from pyparsing import Word
 import pandas as pd
 from IPython.display import display
+from io import StringIO
 
 
 def split(word):
@@ -42,6 +43,8 @@ def isSpecial(character,character2): #Aqui simplemente voy a ahcer un monton de 
 def isDigit(character):
     if(character=='.'):
         return True
+    elif(character=='E'):
+        return True
     try:
         int(character) #Se verifica si el valor es convertible a entero, si no, entonces a float
     except ValueError:
@@ -60,60 +63,47 @@ def isAlpha(character):
 
 
 def LexerArimetico(archivo):
-    df=pd.DataFrame(
-        {
-            "Token":[],
-            "Tipo":[]
-        })
+    list=[]
     #Se crea un df de pandas para poder posteriormente organizar la informacion dentro de este
     spltstr=split(archivo)
-    print(spltstr)
     element=0
+    newS=StringIO() #Con la libreria StringIO (para una concatenacion de strings mas sencilla), se crea un string nuevo para los numeros en general para poder asi agrupar a los float
     while element<len(spltstr):
-        newn=""
         if(spltstr[element]=='\n' or spltstr[element]==' '): #Si el caracter es un empty string, se ignora
             element+=1
             continue
         elif(isDigit(spltstr[element])!=False):
             while (isDigit(spltstr[element])!=False) or (spltstr[element]=='E'): #Se va a formar un neuvo string mientras haya numeros o nos encontremos con un exponencial
-                newn.join(spltstr[element])
+                newS.write(spltstr[element])
                 element+=1
+            if(spltstr[element]!='-'):
+                list.append((newS.getvalue(),isDigit(newS.getvalue())))
+            else:
+                continue
         elif(isAlpha(spltstr[element])):
-            #df.append([spltstr[element]],["Variable"]) #Dentro del dataframe asumiendo que cualquier letra menos la E que es utilizada como exponencial se agrega como variable
-            df2=pd.DataFrame(
-                {
-                    "Token":[spltstr[element]],
-                    "Tipo":["Variable"]
-                }) 
-            pd.concat([df,df2])
+            newS.seek(0)
+            newS.truncate(0)
+            list.append((spltstr[element],"Variable"))
             element+=1     
         elif(isSpecial(spltstr[element],spltstr[element+1])!=False):
             special=isSpecial(spltstr[element],spltstr[element+1]) #Si no regresa false, regresa un strirng que agregaremos a la tabla
             if(special=="NOTRESTA"):
-                newn.join(spltstr[element])
+                newS.write(spltstr[element])
                 element+=1
             elif(special=="Comentario"):
-                comment=""
+                newS.seek(0)
+                newS.truncate(0)
+                comment=StringIO()
                 while element<len(spltstr):
-                    comment.join(spltstr[element]) #Se crea un solo string con lo que queda de toda la linea
-                #df.append([comment],[special])
-                df2=pd.DataFrame(
-                {
-                    "Token":[comment],
-                    "Tipo":[special]
-                }) 
-                pd.concat([df,df2])
-                element+=1  
-
+                    comment.write(spltstr[element]) #Se crea un solo string con lo que queda de toda la linea
+                    element+=1
+                list.append((comment.getvalue(),special)) 
             else:
-                #df.append([spltstr[element]],[special])
-                df2=pd.DataFrame(
-                {
-                    "Token":[spltstr[element]],
-                    "Tipo":[special]
-                }) 
-                pd.concat([df,df2])
+                newS.seek(0)
+                newS.truncate(0)
+                list.append((spltstr[element],special)) 
                 element+=1  
+    df=pd.DataFrame(list, columns=['Token','Tipo'])
     display(df)
                  
 
@@ -124,7 +114,8 @@ with open("C:/Users/forar/Desktop/Skul/TC2037/Act3.2/DFA-Equation-Reading/entrad
     for line in archivo:
         eqs.append(line)
 #Todas las entradas del archivo de texto, leidas linea por linea se guardan como indices dentro de una lista
-print(eqs)
-for line in range(len(eqs)):
-    LexerArimetico(eqs[line])
+#for line in range(len(eqs)):
+
+for i in range(len(eqs)):
+    LexerArimetico(eqs[i])
 
