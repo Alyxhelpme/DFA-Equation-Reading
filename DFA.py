@@ -114,7 +114,7 @@ def LexerArimetico(archivo):
 
 # MAIN
 # Primero el programa recibira como entrada un archivo de texto
-with open("C:/Users/forar/Desktop/Skul/TC2037/Act3.2/DFA-Equation-Reading/entrada.txt","r") as archivo:
+with open("entrada.txt","r") as archivo:
     eqs=[]
     for line in archivo:
         eqs.append(line)

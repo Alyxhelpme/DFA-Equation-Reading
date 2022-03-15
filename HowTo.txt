@@ -1,0 +1,6 @@
+Actividad 3.2 -- Programando un DFA
+Elaborado con Python 3.10.3
+versiones de librerias vienen incluidas en el requirementes.txt, se usaron en su mayoría built in functions de Python
+También incluye un ejemplo de archivo y como se esta leyendo. El programa simplemente corre al correr el archivo de Python; este utiliza la libreria de Pandas para crear un Dataframe en donde se están guardando los datos almacenados desde la función prinicpal.
+
+ El anexo al DFA conceptualizado también se encuentra dentro de la carpeta como DFA JFLAP
