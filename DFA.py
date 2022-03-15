@@ -86,9 +86,26 @@ def LexerArimetico(archivo):
             else:
                 continue
         elif(isAlpha(spltstr[element])):
-            newS.seek(0)
-            newS.truncate(0)
-            list.append((spltstr[element],"Variable"))
+            if(spltstr[element]=='_' and element==0 and isAlpha(spltstr[element+1])): #Se debe empezar con una letra a fuerzas, entonces si se empieza con un Underscore por ejemplo, va a lanzar una expecion
+                raise Exception("Error reading "+archivo+" ,first element must be an Alpha letter")
+            if(spltstr[element]=='_'):
+                newA=StringIO()
+                if(isAlpha(spltstr[element-1]) or isDigit(spltstr[element-1])): #Si hay un espacio entre las variables no las tomara como variables 
+                    newA.write(spltstr[element-1])
+                    newA.write(spltstr[element])
+                    list.append((newA.getvalue(),"Variable"))
+                    element+=1
+                elif(isAlpha(spltstr[element+1]) or isDigit(spltstr[element+1])):
+                    newA.write(spltstr[element])
+                    newA.write(spltstr[element+1])
+                    list.append((newA.getvalue(),"Variable"))
+                    element+=1
+                else:
+                    raise Exception("Error reading Variable value")
+            elif(isAlpha(spltstr[element+1])==False):
+                newS.seek(0)
+                newS.truncate(0)
+                list.append((spltstr[element],"Variable"))
             element+=1     
         elif(isSpecial(spltstr[element],spltstr[element+1])!=False):
             special=isSpecial(spltstr[element],spltstr[element+1]) #Si no regresa false, regresa un strirng que agregaremos a la tabla

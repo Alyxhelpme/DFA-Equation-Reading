@@ -3,4 +3,12 @@ Elaborado con Python 3.10.3
 versiones de librerias vienen incluidas en el requirementes.txt, se usaron en su mayoría built in functions de Python
 También incluye un ejemplo de archivo y como se esta leyendo. El programa simplemente corre al correr el archivo de Python; este utiliza la libreria de Pandas para crear un Dataframe en donde se están guardando los datos almacenados desde la función prinicpal.
 
- El anexo al DFA conceptualizado también se encuentra dentro de la carpeta como DFA JFLAP
+El anexo al DFA tipo grafo también se encuentra dentro de la carpeta como DFA JFLAP
+
+-- REGLAS DE FORMACIÓN DE TOKENS -- 
+(De la misma manera que esta documentado en Canvas)
+1. Variables: Deben empezar con una sola letra, los underscore también son considerados como una variable
+2. Numeros Reales (flotante): Pueden ser positivos o negativos, ademas de utilizar notacion decimal, en el caso de ser un numero procedente de un .0 como 10.0, se considera int. La letra E ya se mminuscula o mayuscula es considerada atutomaticamente como exponencial.
+3. Comentarios: Inicia  con // despues de ese punto toda la linea es considerada un comentario
+
+En caso de no encontrar la ruta del archivo o no encontrar el archivo de la ruta, agregar la ruta relativa
