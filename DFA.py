@@ -43,7 +43,7 @@ def isSpecial(character,character2): #Aqui simplemente voy a hacer un monton de 
 def isDigit(character):
     if(character=='.'):
         return True
-    elif(character=='E'):
+    elif(character=='E' or character=='e'):
         return True
     try:
         int(character) #Se verifica si el valor es convertible a entero, si no, entonces a float
@@ -56,11 +56,10 @@ def isDigit(character):
     return "Entero"
 
 def isAlpha(character): #Se confirma si es algun tipo de caracter alfanumerico con excepcion a la E
-    if(character.isalpha() and character!='E' or character=='_'):
+    if(character.isalpha() and character!='E' and character!='e' or character=='_'):
         return True
     else:
         return False
-
 
 def LexerArimetico(archivo):
     list=[]
@@ -73,11 +72,17 @@ def LexerArimetico(archivo):
             element+=1
             continue
         elif(isDigit(spltstr[element])!=False):
-            while (isDigit(spltstr[element])!=False) or (spltstr[element]=='E'): #Se va a formar un neuvo string mientras haya numeros o nos encontremos con un exponencial
-                newS.write(spltstr[element])
-                element+=1
+            while (element<=len(spltstr)-1):
+                if(isDigit(spltstr[element])!=False or spltstr[element]=='E'): #Se va a formar un nuevo string mientras haya numeros o nos encontremos con un exponencial
+                    newS.write(spltstr[element])
+                    element+=1
+                else:
+                    break
+            if(element==len(spltstr)): #Por errores en la compilacion del codigo que se quedaba en un indice fuera de la lista, nose podia obtener el valor para el siguieente if
+                element-=1
             if(spltstr[element]!='-'):
                 list.append((newS.getvalue(),isDigit(newS.getvalue())))
+                element+=1
             else:
                 continue
         elif(isAlpha(spltstr[element])):
